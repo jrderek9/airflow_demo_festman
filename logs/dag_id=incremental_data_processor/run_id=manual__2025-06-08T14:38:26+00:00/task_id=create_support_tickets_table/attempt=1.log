@@ -1,0 +1,97 @@
+[2025-06-08T14:38:28.867+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-06-08T14:38:28.917+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: incremental_data_processor.create_support_tickets_table manual__2025-06-08T14:38:26+00:00 [queued]>
+[2025-06-08T14:38:28.933+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: incremental_data_processor.create_support_tickets_table manual__2025-06-08T14:38:26+00:00 [queued]>
+[2025-06-08T14:38:28.934+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 3
+[2025-06-08T14:38:28.961+0000] {taskinstance.py:2330} INFO - Executing <Task(PostgresOperator): create_support_tickets_table> on 2025-06-08 14:38:26+00:00
+[2025-06-08T14:38:28.968+0000] {standard_task_runner.py:63} INFO - Started process 642 to run task
+[2025-06-08T14:38:28.977+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'incremental_data_processor', 'create_support_tickets_table', 'manual__2025-06-08T14:38:26+00:00', '--job-id', '228', '--raw', '--subdir', 'DAGS_FOLDER/incremental_data_processor.py', '--cfg-path', '/tmp/tmpzdyz6n90']
+[2025-06-08T14:38:28.980+0000] {standard_task_runner.py:91} INFO - Job 228: Subtask create_support_tickets_table
+[2025-06-08T14:38:29.068+0000] {task_command.py:426} INFO - Running <TaskInstance: incremental_data_processor.create_support_tickets_table manual__2025-06-08T14:38:26+00:00 [running]> on host 87e83fb02300
+[2025-06-08T14:38:29.206+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='admin@company.com' AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='incremental_data_processor' AIRFLOW_CTX_TASK_ID='create_support_tickets_table' AIRFLOW_CTX_EXECUTION_DATE='2025-06-08T14:38:26+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-06-08T14:38:26+00:00'
+[2025-06-08T14:38:29.207+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-06-08T14:38:29.230+0000] {sql.py:276} INFO - Executing: 
+        CREATE TABLE IF NOT EXISTS support_tickets (
+            ticket_id VARCHAR(20) PRIMARY KEY,
+            created_date TIMESTAMP,
+            customer_id VARCHAR(20),
+            customer_name VARCHAR(100),
+            customer_email VARCHAR(100),
+            category VARCHAR(50),
+            subcategory VARCHAR(100),
+            priority VARCHAR(20),
+            status VARCHAR(20),
+            subject VARCHAR(200),
+            description TEXT,
+            channel VARCHAR(50),
+            assigned_to VARCHAR(10),
+            department VARCHAR(50),
+            first_response_time_hours DECIMAL(10,2),
+            resolution_time_hours DECIMAL(10,2),
+            number_of_interactions INTEGER,
+            satisfaction_rating DECIMAL(3,2),
+            tags TEXT,
+            related_order_id VARCHAR(20),
+            product_id VARCHAR(20),
+            escalated BOOLEAN DEFAULT FALSE,
+            reopened BOOLEAN DEFAULT FALSE,
+            agent_notes TEXT,
+            resolution_notes TEXT,
+            sla_breach BOOLEAN DEFAULT FALSE,
+            response_sla_hours INTEGER,
+            resolution_sla_hours INTEGER,
+            customer_lifetime_value DECIMAL(12,2),
+            is_vip_customer BOOLEAN DEFAULT FALSE,
+            language VARCHAR(20),
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        
+        CREATE INDEX IF NOT EXISTS idx_tickets_created ON support_tickets(created_date);
+        CREATE INDEX IF NOT EXISTS idx_tickets_status ON support_tickets(status);
+        CREATE INDEX IF NOT EXISTS idx_tickets_priority ON support_tickets(priority);
+    
+[2025-06-08T14:38:29.250+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T14:38:29.267+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T14:38:29.278+0000] {sql.py:470} INFO - Running statement: 
+        CREATE TABLE IF NOT EXISTS support_tickets (
+            ticket_id VARCHAR(20) PRIMARY KEY,
+            created_date TIMESTAMP,
+            customer_id VARCHAR(20),
+            customer_name VARCHAR(100),
+            customer_email VARCHAR(100),
+            category VARCHAR(50),
+            subcategory VARCHAR(100),
+            priority VARCHAR(20),
+            status VARCHAR(20),
+            subject VARCHAR(200),
+            description TEXT,
+            channel VARCHAR(50),
+            assigned_to VARCHAR(10),
+            department VARCHAR(50),
+            first_response_time_hours DECIMAL(10,2),
+            resolution_time_hours DECIMAL(10,2),
+            number_of_interactions INTEGER,
+            satisfaction_rating DECIMAL(3,2),
+            tags TEXT,
+            related_order_id VARCHAR(20),
+            product_id VARCHAR(20),
+            escalated BOOLEAN DEFAULT FALSE,
+            reopened BOOLEAN DEFAULT FALSE,
+            agent_notes TEXT,
+            resolution_notes TEXT,
+            sla_breach BOOLEAN DEFAULT FALSE,
+            response_sla_hours INTEGER,
+            resolution_sla_hours INTEGER,
+            customer_lifetime_value DECIMAL(12,2),
+            is_vip_customer BOOLEAN DEFAULT FALSE,
+            language VARCHAR(20),
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        
+        CREATE INDEX IF NOT EXISTS idx_tickets_created ON support_tickets(created_date);
+        CREATE INDEX IF NOT EXISTS idx_tickets_status ON support_tickets(status);
+        CREATE INDEX IF NOT EXISTS idx_tickets_priority ON support_tickets(priority);
+    , parameters: None
+[2025-06-08T14:38:29.287+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-06-08T14:38:29.304+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=incremental_data_processor, task_id=create_support_tickets_table, run_id=manual__2025-06-08T14:38:26+00:00, execution_date=20250608T143826, start_date=20250608T143828, end_date=20250608T143829
+[2025-06-08T14:38:29.364+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-06-08T14:38:29.383+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

@@ -1,0 +1,23 @@
+[2025-06-08T12:02:54.173+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-06-08T12:02:54.222+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: data_monitoring_and_reporting.execute_data_quality_checks scheduled__2025-06-08T06:00:00+00:00 [queued]>
+[2025-06-08T12:02:54.237+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: data_monitoring_and_reporting.execute_data_quality_checks scheduled__2025-06-08T06:00:00+00:00 [queued]>
+[2025-06-08T12:02:54.237+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 2
+[2025-06-08T12:02:54.259+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): execute_data_quality_checks> on 2025-06-08 06:00:00+00:00
+[2025-06-08T12:02:54.266+0000] {standard_task_runner.py:63} INFO - Started process 1723 to run task
+[2025-06-08T12:02:54.272+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'data_monitoring_and_reporting', 'execute_data_quality_checks', 'scheduled__2025-06-08T06:00:00+00:00', '--job-id', '95', '--raw', '--subdir', 'DAGS_FOLDER/data_monitoring_and_reporting.py', '--cfg-path', '/tmp/tmp45l418yr']
+[2025-06-08T12:02:54.277+0000] {standard_task_runner.py:91} INFO - Job 95: Subtask execute_data_quality_checks
+[2025-06-08T12:02:54.374+0000] {task_command.py:426} INFO - Running <TaskInstance: data_monitoring_and_reporting.execute_data_quality_checks scheduled__2025-06-08T06:00:00+00:00 [running]> on host 6211e2649837
+[2025-06-08T12:02:54.546+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='analytics@company.com' AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='data_monitoring_and_reporting' AIRFLOW_CTX_TASK_ID='execute_data_quality_checks' AIRFLOW_CTX_EXECUTION_DATE='2025-06-08T06:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-06-08T06:00:00+00:00'
+[2025-06-08T12:02:54.552+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-06-08T12:02:54.583+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T12:02:54.605+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.9/site-packages/***/providers/common/sql/hooks/sql.py:243 UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+[2025-06-08T12:02:54.630+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T12:02:54.653+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T12:02:54.707+0000] {logging_mixin.py:188} INFO - ✅ All data quality checks passed!
+[2025-06-08T12:02:54.708+0000] {python.py:237} INFO - Done. Returned value was: {'employees_quality': {'table_name': 'employees', 'total_records': 0, 'null_emails': 0, 'duplicate_emails': 0, 'invalid_ages': 0, 'invalid_salaries': 0, 'last_record_created': None}, 'products_quality': {'table_name': 'products', 'total_records': 0, 'duplicate_skus': 0, 'negative_margin_products': 0, 'negative_stock': 0, 'invalid_ratings': 0, 'last_record_created': None}, 'sales_quality': {'table_name': 'sales_transactions', 'total_records': 0, 'negative_amounts': 0, 'future_dates': 0, 'missing_emails': 0, 'failed_payments': 0, 'last_record_created': None}}
+[2025-06-08T12:02:54.711+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-06-08T12:02:54.745+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=data_monitoring_and_reporting, task_id=execute_data_quality_checks, run_id=scheduled__2025-06-08T06:00:00+00:00, execution_date=20250608T060000, start_date=20250608T120254, end_date=20250608T120254
+[2025-06-08T12:02:54.782+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-06-08T12:02:54.813+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.9/site-packages/***/models/baseoperator.py:1296 AirflowProviderDeprecationWarning: Call to deprecated class PostgresOperator. (Please use `***.providers.common.sql.operators.sql.SQLExecuteQueryOperator`.Also, you can provide `hook_params={'schema': <database>}`.)
+[2025-06-08T12:02:54.840+0000] {taskinstance.py:3498} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-06-08T12:02:54.843+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

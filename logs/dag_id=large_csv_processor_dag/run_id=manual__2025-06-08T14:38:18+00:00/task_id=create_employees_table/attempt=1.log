@@ -1,0 +1,101 @@
+[2025-06-08T14:38:21.321+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-06-08T14:38:21.361+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: large_csv_processor_dag.create_employees_table manual__2025-06-08T14:38:18+00:00 [queued]>
+[2025-06-08T14:38:21.375+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: large_csv_processor_dag.create_employees_table manual__2025-06-08T14:38:18+00:00 [queued]>
+[2025-06-08T14:38:21.375+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 2
+[2025-06-08T14:38:21.394+0000] {taskinstance.py:2330} INFO - Executing <Task(PostgresOperator): create_employees_table> on 2025-06-08 14:38:18+00:00
+[2025-06-08T14:38:21.400+0000] {standard_task_runner.py:63} INFO - Started process 584 to run task
+[2025-06-08T14:38:21.404+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'large_csv_processor_dag', 'create_employees_table', 'manual__2025-06-08T14:38:18+00:00', '--job-id', '216', '--raw', '--subdir', 'DAGS_FOLDER/csv_processor.py', '--cfg-path', '/tmp/tmpf14spdaj']
+[2025-06-08T14:38:21.407+0000] {standard_task_runner.py:91} INFO - Job 216: Subtask create_employees_table
+[2025-06-08T14:38:21.471+0000] {task_command.py:426} INFO - Running <TaskInstance: large_csv_processor_dag.create_employees_table manual__2025-06-08T14:38:18+00:00 [running]> on host 87e83fb02300
+[2025-06-08T14:38:21.577+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='large_csv_processor_dag' AIRFLOW_CTX_TASK_ID='create_employees_table' AIRFLOW_CTX_EXECUTION_DATE='2025-06-08T14:38:18+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-06-08T14:38:18+00:00'
+[2025-06-08T14:38:21.578+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-06-08T14:38:21.596+0000] {sql.py:276} INFO - Executing: 
+            DROP TABLE IF EXISTS employees CASCADE;
+            CREATE TABLE employees (
+                employee_id INTEGER PRIMARY KEY,
+                first_name VARCHAR(50),
+                last_name VARCHAR(50),
+                age INTEGER,
+                gender VARCHAR(10),
+                email VARCHAR(100),
+                phone VARCHAR(20),
+                address VARCHAR(200),
+                city VARCHAR(50),
+                state VARCHAR(2),
+                zip_code VARCHAR(10),
+                country VARCHAR(50),
+                hire_date DATE,
+                department VARCHAR(50),
+                job_title VARCHAR(50),
+                salary DECIMAL(10,2),
+                bonus_percentage DECIMAL(5,2),
+                years_experience INTEGER,
+                education_level VARCHAR(50),
+                performance_rating DECIMAL(3,2),
+                satisfaction_score DECIMAL(3,2),
+                attendance_rate DECIMAL(5,2),
+                training_hours INTEGER,
+                certifications INTEGER,
+                is_manager BOOLEAN,
+                team_size INTEGER,
+                remote_work_days INTEGER,
+                marital_status VARCHAR(20),
+                dependents INTEGER,
+                emergency_contact VARCHAR(100),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            
+            -- Create indexes for better query performance
+            CREATE INDEX idx_employees_department ON employees(department);
+            CREATE INDEX idx_employees_email ON employees(email);
+            CREATE INDEX idx_employees_hire_date ON employees(hire_date);
+        
+[2025-06-08T14:38:21.611+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T14:38:21.625+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T14:38:21.633+0000] {sql.py:470} INFO - Running statement: 
+            DROP TABLE IF EXISTS employees CASCADE;
+            CREATE TABLE employees (
+                employee_id INTEGER PRIMARY KEY,
+                first_name VARCHAR(50),
+                last_name VARCHAR(50),
+                age INTEGER,
+                gender VARCHAR(10),
+                email VARCHAR(100),
+                phone VARCHAR(20),
+                address VARCHAR(200),
+                city VARCHAR(50),
+                state VARCHAR(2),
+                zip_code VARCHAR(10),
+                country VARCHAR(50),
+                hire_date DATE,
+                department VARCHAR(50),
+                job_title VARCHAR(50),
+                salary DECIMAL(10,2),
+                bonus_percentage DECIMAL(5,2),
+                years_experience INTEGER,
+                education_level VARCHAR(50),
+                performance_rating DECIMAL(3,2),
+                satisfaction_score DECIMAL(3,2),
+                attendance_rate DECIMAL(5,2),
+                training_hours INTEGER,
+                certifications INTEGER,
+                is_manager BOOLEAN,
+                team_size INTEGER,
+                remote_work_days INTEGER,
+                marital_status VARCHAR(20),
+                dependents INTEGER,
+                emergency_contact VARCHAR(100),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            
+            -- Create indexes for better query performance
+            CREATE INDEX idx_employees_department ON employees(department);
+            CREATE INDEX idx_employees_email ON employees(email);
+            CREATE INDEX idx_employees_hire_date ON employees(hire_date);
+        , parameters: None
+[2025-06-08T14:38:21.652+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-06-08T14:38:21.664+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=large_csv_processor_dag, task_id=create_employees_table, run_id=manual__2025-06-08T14:38:18+00:00, execution_date=20250608T143818, start_date=20250608T143821, end_date=20250608T143821
+[2025-06-08T14:38:21.708+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-06-08T14:38:21.730+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.9/site-packages/***/models/baseoperator.py:1296 AirflowProviderDeprecationWarning: Call to deprecated class PostgresOperator. (Please use `***.providers.common.sql.operators.sql.SQLExecuteQueryOperator`.Also, you can provide `hook_params={'schema': <database>}`.)
+[2025-06-08T14:38:21.761+0000] {taskinstance.py:3498} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-06-08T14:38:21.765+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

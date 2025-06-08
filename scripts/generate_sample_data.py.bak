@@ -1,0 +1,488 @@
+#!/usr/bin/env python3
+"""
+Generate large sample CSV files for Apache Airflow pipeline testing
+This script creates 6 CSV files with a total of 875,000 records
+"""
+
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+import random
+import os
+import sys
+
+# Set random seed for reproducibility
+np.random.seed(42)
+random.seed(42)
+
+# Create sample_files directory if it doesn't exist
+os.makedirs('sample_files', exist_ok=True)
+
+# Helper functions
+def generate_phone():
+    """Generate a random phone number"""
+    return f"({random.randint(200, 999)}){random.randint(100, 999)}-{random.randint(1000, 9999)}"
+
+def generate_address():
+    """Generate a random address"""
+    street_names = ['Main', 'Oak', 'Pine', 'Elm', 'Park', 'Lake', 'Hill', 'Maple', 'Cedar', 'Washington']
+    street_types = ['St', 'Ave', 'Rd', 'Blvd', 'Dr', 'Ln', 'Way', 'Ct', 'Pl']
+    return f"{random.randint(1, 9999)} {random.choice(street_names)} {random.choice(street_types)}"
+
+def generate_employees(num_rows=300000):
+    """Generate employee data with 30 columns"""
+    print(f"\nGenerating {num_rows:,} employee records...")
+    
+    # Data arrays for realistic content
+    first_names = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emily', 'Robert', 'Lisa', 'James', 'Mary',
+                   'William', 'Patricia', 'Richard', 'Jennifer', 'Charles', 'Linda', 'Joseph', 'Barbara',
+                   'Thomas', 'Susan', 'Christopher', 'Jessica', 'Daniel', 'Karen', 'Paul', 'Nancy', 'Mark',
+                   'Betty', 'Donald', 'Helen', 'George', 'Sandra', 'Kenneth', 'Donna', 'Steven', 'Carol']
+    
+    last_names = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez',
+                  'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor',
+                  'Moore', 'Jackson', 'Martin', 'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez',
+                  'Clark', 'Ramirez', 'Lewis', 'Robinson', 'Walker', 'Young', 'Allen', 'King', 'Wright']
+    
+    departments = ['Sales', 'Marketing', 'IT', 'HR', 'Finance', 'Operations', 'Customer Service', 
+                   'R&D', 'Legal', 'Administration', 'Engineering', 'Product', 'Quality Assurance']
+    
+    job_titles = ['Manager', 'Senior Manager', 'Director', 'Analyst', 'Senior Analyst', 'Specialist',
+                  'Coordinator', 'Executive', 'Associate', 'Consultant', 'Engineer', 'Developer',
+                  'Designer', 'Architect', 'Administrator', 'Supervisor', 'Lead', 'Principal']
+    
+    cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio',
+              'San Diego', 'Dallas', 'San Jose', 'Austin', 'Jacksonville', 'Fort Worth', 'Columbus']
+    
+    states = ['NY', 'CA', 'IL', 'TX', 'AZ', 'PA', 'TX', 'CA', 'TX', 'CA', 'TX', 'FL', 'TX', 'OH']
+    
+    education_levels = ['High School', 'Associate', 'Bachelor', 'Master', 'PhD', 'Professional']
+    marital_status = ['Single', 'Married', 'Divorced', 'Widowed', 'Separated']
+    
+    # Generate data
+    data = []
+    for i in range(num_rows):
+        employee_id = i + 1
+        first_name = random.choice(first_names)
+        last_name = random.choice(last_names)
+        
+        row = {
+            'employee_id': employee_id,
+            'first_name': first_name,
+            'last_name': last_name,
+            'age': random.randint(22, 67),
+            'gender': random.choice(['M', 'F', 'Other']),
+            'email': f"{first_name.lower()}.{last_name.lower()}{random.randint(1, 999)}@company.com",
+            'phone': generate_phone(),
+            'address': generate_address(),
+            'city': random.choice(cities),
+            'state': random.choice(states),
+            'zip_code': str(random.randint(10000, 99999)),
+            'country': random.choice(['USA', 'USA', 'USA', 'Canada', 'Mexico']),
+            'hire_date': (datetime.now() - timedelta(days=random.randint(0, 5000))).strftime('%Y-%m-%d'),
+            'department': random.choice(departments),
+            'job_title': random.choice(job_titles),
+            'salary': random.randint(30000, 250000),
+            'bonus_percentage': round(random.uniform(0, 30), 2),
+            'years_experience': random.randint(0, 40),
+            'education_level': random.choice(education_levels),
+            'performance_rating': round(random.uniform(1, 5), 2),
+            'satisfaction_score': round(random.uniform(1, 10), 2),
+            'attendance_rate': round(random.uniform(85, 100), 2),
+            'training_hours': random.randint(0, 200),
+            'certifications': random.randint(0, 10),
+            'is_manager': random.choice([True, False]),
+            'team_size': random.randint(0, 50),
+            'remote_work_days': random.randint(0, 5),
+            'marital_status': random.choice(marital_status),
+            'dependents': random.randint(0, 6),
+            'emergency_contact': f"{random.choice(first_names)} {random.choice(last_names)}"
+        }
+        data.append(row)
+        
+        if (i + 1) % 50000 == 0:
+            print(f"  Generated {i + 1:,} employee records...")
+    
+    # Create DataFrame and save
+    df = pd.DataFrame(data)
+    df.to_csv('sample_files/employees_large.csv', index=False)
+    print(f"✅ Created employees_large.csv with {len(df):,} rows and {len(df.columns)} columns")
+    return len(df)
+
+def generate_products(num_rows=100000):
+    """Generate product inventory data with 30 columns"""
+    print(f"\nGenerating {num_rows:,} product records...")
+    
+    categories = ['Electronics', 'Clothing', 'Home & Garden', 'Sports', 'Books', 'Toys', 'Food & Beverage', 
+                  'Health & Beauty', 'Automotive', 'Office Supplies']
+    brands = ['TechCorp', 'StyleMax', 'HomeEase', 'SportPro', 'BookWorld', 'FunTime', 'GourmetLife', 
+              'BeautyPlus', 'AutoZone', 'OfficeHub']
+    conditions = ['New', 'Refurbished', 'Used - Like New', 'Used - Good', 'Used - Acceptable']
+    warehouses = ['WH-North', 'WH-South', 'WH-East', 'WH-West', 'WH-Central']
+    suppliers = ['Supplier A', 'Supplier B', 'Supplier C', 'Supplier D', 'Supplier E', 'Supplier F']
+    
+    data = []
+    for i in range(num_rows):
+        product_id = f"PROD{str(i + 1).zfill(6)}"
+        category = random.choice(categories)
+        brand = random.choice(brands)
+        
+        row = {
+            'product_id': product_id,
+            'sku': f"SKU{random.randint(100000, 999999)}",
+            'product_name': f"{brand} {category} Item {random.randint(1, 1000)}",
+            'category': category,
+            'brand': brand,
+            'description': f"High-quality {category.lower()} product from {brand}",
+            'unit_price': round(random.uniform(9.99, 999.99), 2),
+            'cost_price': round(random.uniform(5.00, 500.00), 2),
+            'quantity_in_stock': random.randint(0, 5000),
+            'reorder_level': random.randint(10, 100),
+            'reorder_quantity': random.randint(50, 500),
+            'warehouse_location': random.choice(warehouses),
+            'supplier': random.choice(suppliers),
+            'weight_kg': round(random.uniform(0.1, 50.0), 2),
+            'dimensions_cm': f"{random.randint(5, 100)}x{random.randint(5, 100)}x{random.randint(5, 100)}",
+            'condition': random.choice(conditions),
+            'manufactured_date': (datetime.now() - timedelta(days=random.randint(0, 730))).strftime('%Y-%m-%d'),
+            'expiry_date': 'N/A' if category not in ['Food & Beverage', 'Health & Beauty'] else 
+                          (datetime.now() + timedelta(days=random.randint(365, 1095))).strftime('%Y-%m-%d'),
+            'last_restocked': (datetime.now() - timedelta(days=random.randint(0, 30))).strftime('%Y-%m-%d'),
+            'units_sold_30days': random.randint(0, 500),
+            'units_sold_90days': random.randint(0, 1500),
+            'units_sold_365days': random.randint(0, 6000),
+            'rating': round(random.uniform(1.0, 5.0), 1),
+            'review_count': random.randint(0, 2000),
+            'is_active': random.choice([True, True, True, True, False]),  # 80% active
+            'discount_percentage': round(random.uniform(0, 50), 1),
+            'tax_rate': round(random.uniform(0, 15), 2),
+            'shipping_class': random.choice(['Standard', 'Express', 'Overnight', 'Freight']),
+            'country_of_origin': random.choice(['USA', 'China', 'Germany', 'Japan', 'Mexico', 'Canada', 'India']),
+            'barcode': str(random.randint(100000000, 999999999)),
+            'minimum_age': random.choice([0, 0, 0, 13, 18]) if category == 'Toys' else 0
+        }
+        data.append(row)
+        
+        if (i + 1) % 20000 == 0:
+            print(f"  Generated {i + 1:,} product records...")
+    
+    df = pd.DataFrame(data)
+    df.to_csv('sample_files/product_inventory.csv', index=False)
+    print(f"✅ Created product_inventory.csv with {len(df):,} rows and {len(df.columns)} columns")
+    return len(df)
+
+def generate_sales_transactions(num_rows=150000):
+    """Generate sales transaction data with 30 columns"""
+    print(f"\nGenerating {num_rows:,} sales transaction records...")
+    
+    payment_methods = ['Credit Card', 'Debit Card', 'PayPal', 'Cash', 'Bank Transfer', 'Cryptocurrency', 'Gift Card']
+    sales_channels = ['Online', 'In-Store', 'Mobile App', 'Phone', 'Social Media', 'Marketplace']
+    customer_types = ['Regular', 'Premium', 'VIP', 'New', 'Returning']
+    regions = ['North America', 'Europe', 'Asia', 'South America', 'Africa', 'Oceania']
+    order_statuses = ['Delivered', 'Shipped', 'Processing', 'Cancelled', 'Refunded']
+    
+    data = []
+    for i in range(num_rows):
+        transaction_id = f"TRX{str(i + 1).zfill(8)}"
+        
+        # Generate multiple products per transaction
+        num_products = random.randint(1, 5)
+        product_ids = [f"PROD{random.randint(1, 100000):06d}" for _ in range(num_products)]
+        product_names = [f"Product {random.randint(1, 1000)}" for _ in range(num_products)]
+        quantities = [random.randint(1, 10) for _ in range(num_products)]
+        unit_prices = [round(random.uniform(9.99, 299.99), 2) for _ in range(num_products)]
+        
+        subtotal = sum(q * p for q, p in zip(quantities, unit_prices))
+        tax_amount = round(subtotal * 0.0875, 2)
+        shipping_cost = round(random.uniform(0, 25), 2)
+        discount_amount = round(subtotal * random.uniform(0, 0.2), 2)
+        total_amount = round(subtotal + tax_amount + shipping_cost - discount_amount, 2)
+        
+        row = {
+            'transaction_id': transaction_id,
+            'order_date': (datetime.now() - timedelta(days=random.randint(0, 365))).strftime('%Y-%m-%d %H:%M:%S'),
+            'customer_id': f"CUST{random.randint(1, 50000):06d}",
+            'customer_name': f"{random.choice(['John', 'Jane', 'Michael', 'Sarah'])} {random.choice(['Smith', 'Johnson', 'Williams', 'Brown'])}",
+            'customer_email': f"customer{random.randint(1, 50000)}@email.com",
+            'customer_type': random.choice(customer_types),
+            'product_ids': ';'.join(product_ids),
+            'product_names': ';'.join(product_names),
+            'quantities': ';'.join(map(str, quantities)),
+            'unit_prices': ';'.join(map(str, unit_prices)),
+            'subtotal': subtotal,
+            'tax_amount': tax_amount,
+            'shipping_cost': shipping_cost,
+            'discount_amount': discount_amount,
+            'total_amount': total_amount,
+            'payment_method': random.choice(payment_methods),
+            'payment_status': random.choice(['Completed', 'Completed', 'Completed', 'Pending', 'Failed']),
+            'order_status': random.choice(order_statuses),
+            'sales_channel': random.choice(sales_channels),
+            'sales_rep_id': f"REP{random.randint(1, 100):03d}",
+            'sales_rep_name': f"{random.choice(['Tom', 'Amy', 'Jack', 'Emma'])} {random.choice(['Wilson', 'Davis', 'Moore'])}",
+            'shipping_address': f"{generate_address()}, {random.choice(['New York, NY', 'Los Angeles, CA', 'Chicago, IL'])} {random.randint(10000, 99999)}",
+            'billing_address': f"{generate_address()}, {random.choice(['Houston, TX', 'Phoenix, AZ', 'Dallas, TX'])} {random.randint(10000, 99999)}",
+            'region': random.choice(regions),
+            'country': random.choice(['USA', 'Canada', 'UK', 'Germany', 'France', 'Japan']),
+            'currency': random.choice(['USD', 'EUR', 'GBP', 'CAD', 'JPY']),
+            'exchange_rate': round(random.uniform(0.8, 1.2), 4),
+            'notes': '' if random.random() > 0.2 else 'Special delivery instructions',
+            'refund_amount': total_amount if row.get('order_status') == 'Refunded' else 0,
+            'is_gift': random.choice([False, False, False, True]),
+            'loyalty_points_earned': int(total_amount * 10)
+        }
+        data.append(row)
+        
+        if (i + 1) % 30000 == 0:
+            print(f"  Generated {i + 1:,} sales transaction records...")
+    
+    df = pd.DataFrame(data)
+    df.to_csv('sample_files/sales_transactions.csv', index=False)
+    print(f"✅ Created sales_transactions.csv with {len(df):,} rows and {len(df.columns)} columns")
+    return len(df)
+
+def generate_support_tickets(num_rows=75000):
+    """Generate customer support ticket data with 30 columns"""
+    print(f"\nGenerating {num_rows:,} support ticket records...")
+    
+    categories = ['Technical Issue', 'Billing', 'Product Inquiry', 'Shipping', 'Returns', 'Account', 'Feature Request', 'Complaint']
+    priorities = ['Low', 'Medium', 'High', 'Critical']
+    statuses = ['Open', 'In Progress', 'Pending Customer', 'Resolved', 'Closed', 'Escalated']
+    channels = ['Email', 'Phone', 'Chat', 'Social Media', 'Web Form', 'Mobile App']
+    departments = ['Level 1 Support', 'Level 2 Support', 'Technical Team', 'Billing Team', 'Management']
+    
+    data = []
+    for i in range(num_rows):
+        ticket_id = f"TICKET{str(i + 1).zfill(7)}"
+        status = random.choice(statuses)
+        priority = random.choice(priorities)
+        
+        row = {
+            'ticket_id': ticket_id,
+            'created_date': (datetime.now() - timedelta(days=random.randint(0, 180))).strftime('%Y-%m-%d %H:%M:%S'),
+            'customer_id': f"CUST{random.randint(1, 50000):06d}",
+            'customer_name': f"{random.choice(['John', 'Jane', 'Michael', 'Sarah'])} {random.choice(['Smith', 'Johnson', 'Williams', 'Brown'])}",
+            'customer_email': f"customer{random.randint(1, 50000)}@email.com",
+            'category': random.choice(categories),
+            'subcategory': f"{random.choice(categories)} - Type {random.randint(1, 5)}",
+            'priority': priority,
+            'status': status,
+            'subject': f"Issue with order #{random.randint(10000, 99999)}",
+            'description': "Customer reported an issue that requires attention and resolution.",
+            'channel': random.choice(channels),
+            'assigned_to': f"AGENT{random.randint(1, 50):03d}",
+            'department': random.choice(departments),
+            'first_response_time_hours': round(random.uniform(0.1, 24), 2),
+            'resolution_time_hours': round(random.uniform(1, 168), 2) if status in ['Resolved', 'Closed'] else 0,
+            'number_of_interactions': random.randint(1, 20),
+            'satisfaction_rating': round(random.uniform(1, 5), 1) if status in ['Resolved', 'Closed'] else 0,
+            'tags': f"{random.choice(categories).lower()},{priority.lower()},{random.choice(channels).lower()}",
+            'related_order_id': f"TRX{random.randint(1, 150000):08d}" if random.random() < 0.6 else '',
+            'product_id': f"PROD{random.randint(1, 100000):06d}" if random.random() < 0.4 else '',
+            'escalated': True if priority == 'Critical' or random.random() < 0.1 else False,
+            'reopened': random.choice([False, False, False, False, True]),
+            'agent_notes': "Initial investigation completed. Working on resolution.",
+            'resolution_notes': "Issue resolved successfully." if status in ['Resolved', 'Closed'] else '',
+            'sla_breach': random.choice([False, False, False, True]),
+            'response_sla_hours': 1 if priority == 'Critical' else 4 if priority == 'High' else 24,
+            'resolution_sla_hours': 4 if priority == 'Critical' else 24 if priority == 'High' else 72,
+            'customer_lifetime_value': round(random.uniform(100, 10000), 2),
+            'is_vip_customer': random.choice([False, False, False, True]),
+            'language': random.choice(['English', 'Spanish', 'French', 'German', 'Japanese'])
+        }
+        data.append(row)
+        
+        if (i + 1) % 15000 == 0:
+            print(f"  Generated {i + 1:,} support ticket records...")
+    
+    df = pd.DataFrame(data)
+    df.to_csv('sample_files/customer_support_tickets.csv', index=False)
+    print(f"✅ Created customer_support_tickets.csv with {len(df):,} rows and {len(df.columns)} columns")
+    return len(df)
+
+def generate_web_analytics(num_rows=200000):
+    """Generate web analytics data with 30 columns"""
+    print(f"\nGenerating {num_rows:,} web analytics records...")
+    
+    pages = ['/home', '/products', '/about', '/contact', '/blog', '/checkout', '/cart', '/login', '/register', '/search']
+    sources = ['Organic Search', 'Direct', 'Social Media', 'Email', 'Paid Search', 'Referral', 'Display Ads']
+    devices = ['Desktop', 'Mobile', 'Tablet']
+    browsers = ['Chrome', 'Safari', 'Firefox', 'Edge', 'Opera', 'Samsung Internet']
+    countries = ['USA', 'UK', 'Canada', 'Germany', 'France', 'Japan', 'Australia', 'Brazil', 'India', 'Mexico']
+    os_list = ['Windows', 'macOS', 'iOS', 'Android', 'Linux', 'ChromeOS']
+    campaigns = ['Summer Sale', 'Black Friday', 'New Year', 'Spring Collection', 'Flash Sale', 'Newsletter']
+    
+    data = []
+    for i in range(num_rows):
+        session_id = f"SESSION{str(i + 1).zfill(10)}"
+        device = random.choice(devices)
+        pages_viewed = random.randint(1, 20)
+        
+        row = {
+            'session_id': session_id,
+            'user_id': f"USER{random.randint(1, 100000):08d}" if random.random() < 0.7 else 'anonymous',
+            'timestamp': (datetime.now() - timedelta(hours=random.randint(0, 720))).strftime('%Y-%m-%d %H:%M:%S'),
+            'page_url': random.choice(pages),
+            'referrer_url': random.choice(['https://google.com', 'https://facebook.com', 'https://twitter.com', 'direct', '']),
+            'source': random.choice(sources),
+            'medium': random.choice(['organic', 'cpc', 'referral', 'email', 'social']),
+            'campaign': random.choice(campaigns) if random.random() < 0.3 else '',
+            'device_type': device,
+            'browser': random.choice(browsers),
+            'operating_system': random.choice(os_list),
+            'screen_resolution': '1920x1080' if device == 'Desktop' else '375x667' if device == 'Mobile' else '768x1024',
+            'country': random.choice(countries),
+            'city': random.choice(['New York', 'London', 'Toronto', 'Berlin', 'Paris', 'Tokyo', 'Sydney']),
+            'language': random.choice(['en-US', 'en-GB', 'es-ES', 'fr-FR', 'de-DE', 'ja-JP']),
+            'session_duration_seconds': random.randint(1, 1800),
+            'pages_viewed': pages_viewed,
+            'bounce': True if pages_viewed == 1 else False,
+            'conversion': random.choice([False, False, False, True]),
+            'conversion_value': round(random.uniform(10, 500), 2) if row.get('conversion') else 0,
+            'events_triggered': random.randint(0, 50),
+            'click_through_rate': round(random.uniform(0, 10), 2),
+            'scroll_depth_percentage': random.randint(0, 100),
+            'form_submissions': random.randint(0, 3),
+            'downloads': random.randint(0, 5),
+            'video_plays': random.randint(0, 10),
+            'add_to_cart': random.randint(0, 5),
+            'purchases': random.randint(0, 2),
+            'new_vs_returning': random.choice(['New', 'Returning']),
+            'user_agent': f"Mozilla/5.0 ({random.choice(os_list)}) {random.choice(browsers)}/{random.randint(70, 100)}.0",
+            'ip_address_hash': f"hash_{random.randint(100000, 999999)}",
+            'session_quality_score': round(random.uniform(0, 100), 2)
+        }
+        data.append(row)
+        
+        if (i + 1) % 40000 == 0:
+            print(f"  Generated {i + 1:,} web analytics records...")
+    
+    df = pd.DataFrame(data)
+    df.to_csv('sample_files/website_analytics.csv', index=False)
+    print(f"✅ Created website_analytics.csv with {len(df):,} rows and {len(df.columns)} columns")
+    return len(df)
+
+def generate_healthcare_records(num_rows=50000):
+    """Generate healthcare record data with 30 columns"""
+    print(f"\nGenerating {num_rows:,} healthcare records...")
+    
+    departments = ['Emergency', 'Cardiology', 'Neurology', 'Orthopedics', 'Pediatrics', 'Oncology', 'General Medicine', 'Surgery']
+    diagnoses = ['Hypertension', 'Diabetes Type 2', 'Asthma', 'Arthritis', 'Depression', 'Anxiety', 'Back Pain', 'Migraine']
+    blood_types = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+    admission_types = ['Emergency', 'Elective', 'Urgent', 'Routine']
+    discharge_dispositions = ['Home', 'Home Health', 'Skilled Nursing', 'Rehab', 'AMA']
+    insurance_providers = ['Blue Cross', 'Aetna', 'Cigna', 'United Health', 'Kaiser', 'Anthem', 'Humana']
+    
+    data = []
+    for i in range(num_rows):
+        patient_id = f"PAT{str(i + 1).zfill(8)}"
+        admission_date = datetime.now() - timedelta(days=random.randint(0, 365))
+        stay_days = random.randint(1, 14)
+        discharge_date = admission_date + timedelta(days=stay_days)
+        birth_year = datetime.now().year - random.randint(20, 80)
+        
+        total_charges = round(random.uniform(500, 50000), 2)
+        insurance_covered = round(total_charges * random.uniform(0.6, 0.9), 2)
+        copay = round(random.uniform(20, 200), 2)
+        patient_balance = round(total_charges - insurance_covered + copay, 2)
+        
+        row = {
+            'patient_id': patient_id,
+            'admission_date': admission_date.strftime('%Y-%m-%d'),
+            'discharge_date': discharge_date.strftime('%Y-%m-%d'),
+            'patient_name': f"{random.choice(['John', 'Jane', 'Michael', 'Sarah'])} {random.choice(['Smith', 'Johnson', 'Williams', 'Brown'])}",
+            'date_of_birth': f"{birth_year}-{random.randint(1, 12):02d}-{random.randint(1, 28):02d}",
+            'age': datetime.now().year - birth_year,
+            'gender': random.choice(['Male', 'Female', 'Other']),
+            'blood_type': random.choice(blood_types),
+            'height_cm': random.randint(150, 200),
+            'weight_kg': round(random.uniform(45, 120), 1),
+            'bmi': round(random.uniform(18, 35), 1),
+            'department': random.choice(departments),
+            'primary_diagnosis': random.choice(diagnoses),
+            'secondary_diagnosis': random.choice(diagnoses) if random.random() < 0.4 else '',
+            'attending_physician': f"Dr. {random.choice(['Smith', 'Johnson', 'Williams', 'Brown', 'Davis'])}",
+            'referring_physician': f"Dr. {random.choice(['Miller', 'Wilson', 'Moore', 'Taylor'])}" if random.random() < 0.6 else '',
+            'procedures_performed': f"{random.choice(['Blood Test', 'X-Ray', 'MRI', 'CT Scan'])};{random.choice(['ECG', 'Ultrasound'])}",
+            'medications_prescribed': f"{random.choice(['Ibuprofen', 'Amoxicillin', 'Lisinopril'])};{random.choice(['Metformin', 'Omeprazole'])}",
+            'lab_results': random.choice(['Normal', 'Abnormal', 'Pending']),
+            'vital_signs': f"BP:{random.randint(110, 140)}/{random.randint(70, 90)};HR:{random.randint(60, 100)};Temp:{round(random.uniform(97, 99), 1)}F",
+            'insurance_provider': random.choice(insurance_providers),
+            'insurance_id': f"INS{random.randint(100000000, 999999999)}",
+            'copay_amount': copay,
+            'total_charges': total_charges,
+            'insurance_covered': insurance_covered,
+            'patient_balance': patient_balance,
+            'admission_type': random.choice(admission_types),
+            'discharge_disposition': random.choice(discharge_dispositions),
+            'length_of_stay_days': stay_days,
+            'readmission_risk': random.choice(['Low', 'Medium', 'High']),
+            'patient_satisfaction': round(random.uniform(1, 5), 1),
+            'follow_up_required': random.choice([True, True, True, False])
+        }
+        data.append(row)
+        
+        if (i + 1) % 10000 == 0:
+            print(f"  Generated {i + 1:,} healthcare records...")
+    
+    df = pd.DataFrame(data)
+    df.to_csv('sample_files/healthcare_records.csv', index=False)
+    print(f"✅ Created healthcare_records.csv with {len(df):,} rows and {len(df.columns)} columns")
+    return len(df)
+
+def generate_small_test_file():
+    """Generate a small test CSV file"""
+    print("\nGenerating small test file...")
+    
+    data = {
+        'id': [1, 2, 3, 4, 5],
+        'name': ['John Doe', 'Jane Smith', 'Bob Johnson', 'Alice Williams', 'Charlie Brown'],
+        'age': [30, 25, 35, 28, 32]
+    }
+    
+    df = pd.DataFrame(data)
+    df.to_csv('sample_files/input.csv', index=False)
+    print("✅ Created input.csv with 5 rows (test file)")
+    return len(df)
+
+def main():
+    """Main function to generate all CSV files"""
+    print("="*60)
+    print("Apache Airflow Sample Data Generator")
+    print("="*60)
+    print(f"Starting data generation at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    
+    total_rows = 0
+    start_time = datetime.now()
+    
+    # Generate all CSV files
+    total_rows += generate_employees(300000)
+    total_rows += generate_products(100000)
+    total_rows += generate_sales_transactions(150000)
+    total_rows += generate_support_tickets(75000)
+    total_rows += generate_web_analytics(200000)
+    total_rows += generate_healthcare_records(50000)
+    total_rows += generate_small_test_file()
+    
+    end_time = datetime.now()
+    duration = (end_time - start_time).total_seconds()
+    
+    print("\n" + "="*60)
+    print("✅ DATA GENERATION COMPLETE!")
+    print("="*60)
+    print(f"Total records generated: {total_rows:,}")
+    print(f"Total files created: 7")
+    print(f"Time taken: {duration:.2f} seconds")
+    print(f"Files location: ./sample_files/")
+    print("\nGenerated files:")
+    print("  1. employees_large.csv         - 300,000 rows")
+    print("  2. product_inventory.csv       - 100,000 rows")
+    print("  3. sales_transactions.csv      - 150,000 rows")
+    print("  4. customer_support_tickets.csv - 75,000 rows")
+    print("  5. website_analytics.csv       - 200,000 rows")
+    print("  6. healthcare_records.csv      - 50,000 rows")
+    print("  7. input.csv                   - 5 rows (test file)")
+    print("="*60)
+
+if __name__ == "__main__":
+    main()

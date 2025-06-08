@@ -1,0 +1,97 @@
+[2025-06-08T14:00:03.017+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-06-08T14:00:03.066+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: incremental_data_processor.create_sales_transactions_table scheduled__2025-06-08T13:00:00+00:00 [queued]>
+[2025-06-08T14:00:03.082+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: incremental_data_processor.create_sales_transactions_table scheduled__2025-06-08T13:00:00+00:00 [queued]>
+[2025-06-08T14:00:03.084+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 3
+[2025-06-08T14:00:03.107+0000] {taskinstance.py:2330} INFO - Executing <Task(PostgresOperator): create_sales_transactions_table> on 2025-06-08 13:00:00+00:00
+[2025-06-08T14:00:03.115+0000] {standard_task_runner.py:63} INFO - Started process 968 to run task
+[2025-06-08T14:00:03.129+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'incremental_data_processor', 'create_sales_transactions_table', 'scheduled__2025-06-08T13:00:00+00:00', '--job-id', '171', '--raw', '--subdir', 'DAGS_FOLDER/incremental_data_processor.py', '--cfg-path', '/tmp/tmp87g2uy6m']
+[2025-06-08T14:00:03.136+0000] {standard_task_runner.py:91} INFO - Job 171: Subtask create_sales_transactions_table
+[2025-06-08T14:00:03.260+0000] {task_command.py:426} INFO - Running <TaskInstance: incremental_data_processor.create_sales_transactions_table scheduled__2025-06-08T13:00:00+00:00 [running]> on host afb0ae728713
+[2025-06-08T14:00:03.445+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='admin@company.com' AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='incremental_data_processor' AIRFLOW_CTX_TASK_ID='create_sales_transactions_table' AIRFLOW_CTX_EXECUTION_DATE='2025-06-08T13:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-06-08T13:00:00+00:00'
+[2025-06-08T14:00:03.448+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-06-08T14:00:03.480+0000] {sql.py:276} INFO - Executing: 
+        CREATE TABLE IF NOT EXISTS sales_transactions (
+            transaction_id VARCHAR(20) PRIMARY KEY,
+            order_date TIMESTAMP,
+            customer_id VARCHAR(20),
+            customer_name VARCHAR(100),
+            customer_email VARCHAR(100),
+            customer_type VARCHAR(20),
+            product_ids TEXT,
+            product_names TEXT,
+            quantities TEXT,
+            unit_prices TEXT,
+            subtotal DECIMAL(12,2),
+            tax_amount DECIMAL(10,2),
+            shipping_cost DECIMAL(10,2),
+            discount_amount DECIMAL(10,2),
+            total_amount DECIMAL(12,2),
+            payment_method VARCHAR(50),
+            payment_status VARCHAR(20),
+            order_status VARCHAR(20),
+            sales_channel VARCHAR(50),
+            sales_rep_id VARCHAR(10),
+            sales_rep_name VARCHAR(100),
+            shipping_address TEXT,
+            billing_address TEXT,
+            region VARCHAR(50),
+            country VARCHAR(50),
+            currency VARCHAR(10),
+            exchange_rate DECIMAL(10,4),
+            notes TEXT,
+            refund_amount DECIMAL(12,2) DEFAULT 0,
+            is_gift BOOLEAN DEFAULT FALSE,
+            loyalty_points_earned INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        
+        CREATE INDEX IF NOT EXISTS idx_sales_order_date ON sales_transactions(order_date);
+        CREATE INDEX IF NOT EXISTS idx_sales_customer ON sales_transactions(customer_id);
+        CREATE INDEX IF NOT EXISTS idx_sales_status ON sales_transactions(order_status);
+    
+[2025-06-08T14:00:03.509+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T14:00:03.531+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T14:00:03.544+0000] {sql.py:470} INFO - Running statement: 
+        CREATE TABLE IF NOT EXISTS sales_transactions (
+            transaction_id VARCHAR(20) PRIMARY KEY,
+            order_date TIMESTAMP,
+            customer_id VARCHAR(20),
+            customer_name VARCHAR(100),
+            customer_email VARCHAR(100),
+            customer_type VARCHAR(20),
+            product_ids TEXT,
+            product_names TEXT,
+            quantities TEXT,
+            unit_prices TEXT,
+            subtotal DECIMAL(12,2),
+            tax_amount DECIMAL(10,2),
+            shipping_cost DECIMAL(10,2),
+            discount_amount DECIMAL(10,2),
+            total_amount DECIMAL(12,2),
+            payment_method VARCHAR(50),
+            payment_status VARCHAR(20),
+            order_status VARCHAR(20),
+            sales_channel VARCHAR(50),
+            sales_rep_id VARCHAR(10),
+            sales_rep_name VARCHAR(100),
+            shipping_address TEXT,
+            billing_address TEXT,
+            region VARCHAR(50),
+            country VARCHAR(50),
+            currency VARCHAR(10),
+            exchange_rate DECIMAL(10,4),
+            notes TEXT,
+            refund_amount DECIMAL(12,2) DEFAULT 0,
+            is_gift BOOLEAN DEFAULT FALSE,
+            loyalty_points_earned INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        
+        CREATE INDEX IF NOT EXISTS idx_sales_order_date ON sales_transactions(order_date);
+        CREATE INDEX IF NOT EXISTS idx_sales_customer ON sales_transactions(customer_id);
+        CREATE INDEX IF NOT EXISTS idx_sales_status ON sales_transactions(order_status);
+    , parameters: None
+[2025-06-08T14:00:03.553+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-06-08T14:00:03.570+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=incremental_data_processor, task_id=create_sales_transactions_table, run_id=scheduled__2025-06-08T13:00:00+00:00, execution_date=20250608T130000, start_date=20250608T140003, end_date=20250608T140003
+[2025-06-08T14:00:03.637+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-06-08T14:00:03.656+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

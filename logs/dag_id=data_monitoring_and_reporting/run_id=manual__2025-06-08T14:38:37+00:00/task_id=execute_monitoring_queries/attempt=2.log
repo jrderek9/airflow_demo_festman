@@ -1,0 +1,250 @@
+[2025-06-08T14:43:39.180+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-06-08T14:43:39.226+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: data_monitoring_and_reporting.execute_monitoring_queries manual__2025-06-08T14:38:37+00:00 [queued]>
+[2025-06-08T14:43:39.238+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: data_monitoring_and_reporting.execute_monitoring_queries manual__2025-06-08T14:38:37+00:00 [queued]>
+[2025-06-08T14:43:39.239+0000] {taskinstance.py:2306} INFO - Starting attempt 2 of 2
+[2025-06-08T14:43:39.259+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): execute_monitoring_queries> on 2025-06-08 14:38:37+00:00
+[2025-06-08T14:43:39.264+0000] {standard_task_runner.py:63} INFO - Started process 512 to run task
+[2025-06-08T14:43:39.268+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'data_monitoring_and_reporting', 'execute_monitoring_queries', 'manual__2025-06-08T14:38:37+00:00', '--job-id', '255', '--raw', '--subdir', 'DAGS_FOLDER/data_monitoring_and_reporting.py', '--cfg-path', '/tmp/tmpoo2n4p09']
+[2025-06-08T14:43:39.272+0000] {standard_task_runner.py:91} INFO - Job 255: Subtask execute_monitoring_queries
+[2025-06-08T14:43:39.338+0000] {task_command.py:426} INFO - Running <TaskInstance: data_monitoring_and_reporting.execute_monitoring_queries manual__2025-06-08T14:38:37+00:00 [running]> on host f6c4201d846e
+[2025-06-08T14:43:39.460+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='analytics@company.com' AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='data_monitoring_and_reporting' AIRFLOW_CTX_TASK_ID='execute_monitoring_queries' AIRFLOW_CTX_EXECUTION_DATE='2025-06-08T14:38:37+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-06-08T14:38:37+00:00'
+[2025-06-08T14:43:39.462+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-06-08T14:43:39.489+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T14:43:39.503+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.9/site-packages/***/providers/common/sql/hooks/sql.py:243 UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+[2025-06-08T14:43:39.506+0000] {logging_mixin.py:188} INFO - Error executing employee_metrics: Execution failed on sql '
+        WITH employee_stats AS (
+            SELECT 
+                COUNT(*) as total_employees,
+                COUNT(CASE WHEN is_active = true THEN 1 END) as active_employees,
+                COUNT(CASE WHEN is_manager = true THEN 1 END) as total_managers,
+                AVG(salary) as avg_salary,
+                AVG(performance_rating) as avg_performance,
+                AVG(satisfaction_score) as avg_satisfaction,
+                COUNT(DISTINCT department) as num_departments
+            FROM employees
+            WHERE created_at >= NOW() - INTERVAL '24 hours'
+        ),
+        department_breakdown AS (
+            SELECT 
+                department,
+                COUNT(*) as dept_count,
+                AVG(salary) as dept_avg_salary
+            FROM employees
+            WHERE is_active = true
+            GROUP BY department
+            ORDER BY dept_count DESC
+            LIMIT 5
+        )
+        SELECT 
+            'employee_summary' as metric_type,
+            json_build_object(
+                'total_stats', (SELECT row_to_json(employee_stats) FROM employee_stats),
+                'top_departments', (SELECT json_agg(row_to_json(department_breakdown)) FROM department_breakdown)
+            ) as metrics
+    ': column "is_active" does not exist
+LINE 5:                 COUNT(CASE WHEN is_active = true THEN 1 END)...
+                                        ^
+[2025-06-08T14:43:39.522+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T14:43:39.532+0000] {logging_mixin.py:188} INFO - Error executing sales_metrics: Execution failed on sql '
+        WITH daily_sales AS (
+            SELECT 
+                DATE(order_date) as sale_date,
+                COUNT(*) as transaction_count,
+                SUM(total_amount) as daily_revenue,
+                AVG(total_amount) as avg_transaction_value,
+                COUNT(DISTINCT customer_id) as unique_customers
+            FROM sales_transactions
+            WHERE order_date >= NOW() - INTERVAL '7 days'
+            GROUP BY DATE(order_date)
+            ORDER BY sale_date DESC
+        ),
+        channel_performance AS (
+            SELECT 
+                sales_channel,
+                COUNT(*) as channel_transactions,
+                SUM(total_amount) as channel_revenue,
+                AVG(total_amount) as avg_order_value
+            FROM sales_transactions
+            WHERE order_date >= NOW() - INTERVAL '24 hours'
+            GROUP BY sales_channel
+        ),
+        payment_status AS (
+            SELECT 
+                payment_status,
+                COUNT(*) as status_count,
+                SUM(total_amount) as status_amount
+            FROM sales_transactions
+            WHERE order_date >= NOW() - INTERVAL '24 hours'
+            GROUP BY payment_status
+        )
+        SELECT 
+            'sales_summary' as metric_type,
+            json_build_object(
+                'daily_trends', (SELECT json_agg(row_to_json(daily_sales)) FROM daily_sales),
+                'channel_performance', (SELECT json_agg(row_to_json(channel_performance)) FROM channel_performance),
+                'payment_status', (SELECT json_agg(row_to_json(payment_status)) FROM payment_status)
+            ) as metrics
+    ': function row_to_json(character varying) does not exist
+LINE 38: ...               'payment_status', (SELECT json_agg(row_to_jso...
+                                                              ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+[2025-06-08T14:43:39.547+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T14:43:39.578+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T14:43:39.600+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T14:43:39.610+0000] {logging_mixin.py:188} INFO - Error executing analytics_metrics: Execution failed on sql '
+        WITH session_stats AS (
+            SELECT 
+                COUNT(*) as total_sessions,
+                COUNT(DISTINCT user_id) as unique_users,
+                AVG(session_duration_seconds) as avg_session_duration,
+                AVG(pages_viewed) as avg_pages_per_session,
+                COUNT(CASE WHEN bounce = true THEN 1 END) * 100.0 / COUNT(*) as bounce_rate,
+                COUNT(CASE WHEN conversion = true THEN 1 END) * 100.0 / COUNT(*) as conversion_rate,
+                SUM(conversion_value) as total_conversion_value
+            FROM web_analytics
+            WHERE timestamp >= NOW() - INTERVAL '24 hours'
+        ),
+        traffic_sources AS (
+            SELECT 
+                source,
+                COUNT(*) as source_sessions,
+                COUNT(CASE WHEN conversion = true THEN 1 END) as source_conversions,
+                AVG(session_duration_seconds) as avg_duration
+            FROM web_analytics
+            WHERE timestamp >= NOW() - INTERVAL '24 hours'
+            GROUP BY source
+            ORDER BY source_sessions DESC
+        ),
+        device_breakdown AS (
+            SELECT 
+                device_type,
+                COUNT(*) as device_sessions,
+                AVG(pages_viewed) as avg_pages,
+                COUNT(CASE WHEN bounce = true THEN 1 END) * 100.0 / COUNT(*) as device_bounce_rate
+            FROM web_analytics
+            WHERE timestamp >= NOW() - INTERVAL '24 hours'
+            GROUP BY device_type
+        ),
+        top_pages AS (
+            SELECT 
+                page_url,
+                COUNT(*) as page_views,
+                AVG(scroll_depth_percentage) as avg_scroll_depth
+            FROM web_analytics
+            WHERE timestamp >= NOW() - INTERVAL '24 hours'
+            GROUP BY page_url
+            ORDER BY page_views DESC
+            LIMIT 10
+        )
+        SELECT 
+            'analytics_summary' as metric_type,
+            json_build_object(
+                'session_stats', (SELECT row_to_json(session_stats) FROM session_stats),
+                'traffic_sources', (SELECT json_agg(row_to_json(traffic_sources)) FROM traffic_sources),
+                'device_breakdown', (SELECT json_agg(row_to_json(device_breakdown)) FROM device_breakdown),
+                'top_pages', (SELECT json_agg(row_to_json(top_pages)) FROM top_pages)
+            ) as metrics
+    ': division by zero
+[2025-06-08T14:43:39.622+0000] {base.py:84} INFO - Using connection ID 'write_to_psql' for task execution.
+[2025-06-08T14:43:39.654+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-06-08T14:43:39.655+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/models/baseoperator.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/operators/python.py", line 235, in execute
+    return_value = self.execute_callable()
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/operators/python.py", line 252, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+  File "/opt/airflow/dags/data_monitoring_and_reporting.py", line 359, in execute_monitoring_queries
+    with open(report_file, 'w') as f:
+PermissionError: [Errno 13] Permission denied: './dags/reports/monitoring_report_20250608_144339.json'
+[2025-06-08T14:43:39.668+0000] {taskinstance.py:1206} INFO - Marking task as FAILED. dag_id=data_monitoring_and_reporting, task_id=execute_monitoring_queries, run_id=manual__2025-06-08T14:38:37+00:00, execution_date=20250608T143837, start_date=20250608T144339, end_date=20250608T144339
+[2025-06-08T14:43:39.689+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.9/site-packages/***/utils/email.py:154 RemovedInAirflow3Warning: Fetching SMTP credentials from configuration variables will be deprecated in a future release. Please set credentials using a connection instead.
+[2025-06-08T14:43:39.691+0000] {configuration.py:1050} WARNING - section/key [smtp/smtp_user] not found in config
+[2025-06-08T14:43:39.692+0000] {email.py:271} INFO - Email alerting: attempt 1
+[2025-06-08T14:43:39.703+0000] {configuration.py:1050} WARNING - section/key [smtp/smtp_user] not found in config
+[2025-06-08T14:43:39.704+0000] {email.py:271} INFO - Email alerting: attempt 1
+[2025-06-08T14:43:39.704+0000] {taskinstance.py:879} ERROR - Failed to send email to: ['analytics@company.com']
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/models/taskinstance.py", line 2479, in _run_raw_task
+    self._execute_task_with_callbacks(context, test_mode, session=session)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/models/taskinstance.py", line 2676, in _execute_task_with_callbacks
+    result = self._execute_task(context, task_orig)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/models/taskinstance.py", line 2701, in _execute_task
+    return _execute_task(self, context, task_orig)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/models/baseoperator.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/operators/python.py", line 235, in execute
+    return_value = self.execute_callable()
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/operators/python.py", line 252, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+  File "/opt/airflow/dags/data_monitoring_and_reporting.py", line 359, in execute_monitoring_queries
+    with open(report_file, 'w') as f:
+PermissionError: [Errno 13] Permission denied: './dags/reports/monitoring_report_20250608_144339.json'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/models/taskinstance.py", line 1063, in _email_alert
+    send_email(task.email, subject, html_content)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/utils/email.py", line 80, in send_email
+    return backend(
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/utils/email.py", line 154, in send_email_smtp
+    send_mime_email(e_from=mail_from, e_to=recipients, mime_msg=msg, conn_id=conn_id, dryrun=dryrun)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/utils/email.py", line 273, in send_mime_email
+    smtp_conn = _get_smtp_connection(smtp_host, smtp_port, smtp_timeout, smtp_ssl)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/utils/email.py", line 317, in _get_smtp_connection
+    return smtplib.SMTP(host=host, port=port, timeout=timeout)
+  File "/usr/local/lib/python3.9/smtplib.py", line 255, in __init__
+    (code, msg) = self.connect(host, port)
+  File "/usr/local/lib/python3.9/smtplib.py", line 341, in connect
+    self.sock = self._get_socket(host, port, self.timeout)
+  File "/usr/local/lib/python3.9/smtplib.py", line 312, in _get_socket
+    return socket.create_connection((host, port), timeout,
+  File "/usr/local/lib/python3.9/socket.py", line 844, in create_connection
+    raise err
+  File "/usr/local/lib/python3.9/socket.py", line 832, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/models/taskinstance.py", line 877, in _handle_failure
+    task_instance.email_alert(error, failure_context["task"])
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/models/taskinstance.py", line 3163, in email_alert
+    _email_alert(task_instance=self, exception=exception, task=task)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/models/taskinstance.py", line 1065, in _email_alert
+    send_email(task.email, subject, html_content_err)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/utils/email.py", line 80, in send_email
+    return backend(
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/utils/email.py", line 154, in send_email_smtp
+    send_mime_email(e_from=mail_from, e_to=recipients, mime_msg=msg, conn_id=conn_id, dryrun=dryrun)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/utils/email.py", line 273, in send_mime_email
+    smtp_conn = _get_smtp_connection(smtp_host, smtp_port, smtp_timeout, smtp_ssl)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/utils/email.py", line 317, in _get_smtp_connection
+    return smtplib.SMTP(host=host, port=port, timeout=timeout)
+  File "/usr/local/lib/python3.9/smtplib.py", line 255, in __init__
+    (code, msg) = self.connect(host, port)
+  File "/usr/local/lib/python3.9/smtplib.py", line 341, in connect
+    self.sock = self._get_socket(host, port, self.timeout)
+  File "/usr/local/lib/python3.9/smtplib.py", line 312, in _get_socket
+    return socket.create_connection((host, port), timeout,
+  File "/usr/local/lib/python3.9/socket.py", line 844, in create_connection
+    raise err
+  File "/usr/local/lib/python3.9/socket.py", line 832, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+[2025-06-08T14:43:39.722+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 255 for task execute_monitoring_queries ([Errno 13] Permission denied: './dags/reports/monitoring_report_20250608_144339.json'; 512)
+[2025-06-08T14:43:39.736+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 1
+[2025-06-08T14:43:39.757+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.9/site-packages/***/models/baseoperator.py:1296 AirflowProviderDeprecationWarning: Call to deprecated class PostgresOperator. (Please use `***.providers.common.sql.operators.sql.SQLExecuteQueryOperator`.Also, you can provide `hook_params={'schema': <database>}`.)
+[2025-06-08T14:43:39.774+0000] {taskinstance.py:3498} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-06-08T14:43:39.781+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

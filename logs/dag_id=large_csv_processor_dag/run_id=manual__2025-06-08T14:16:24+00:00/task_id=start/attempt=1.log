@@ -1,0 +1,19 @@
+[2025-06-08T14:16:25.519+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-06-08T14:16:25.556+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: large_csv_processor_dag.start manual__2025-06-08T14:16:24+00:00 [queued]>
+[2025-06-08T14:16:25.567+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: large_csv_processor_dag.start manual__2025-06-08T14:16:24+00:00 [queued]>
+[2025-06-08T14:16:25.568+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 2
+[2025-06-08T14:16:25.583+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): start> on 2025-06-08 14:16:24+00:00
+[2025-06-08T14:16:25.588+0000] {standard_task_runner.py:63} INFO - Started process 2291 to run task
+[2025-06-08T14:16:25.591+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'large_csv_processor_dag', 'start', 'manual__2025-06-08T14:16:24+00:00', '--job-id', '200', '--raw', '--subdir', 'DAGS_FOLDER/csv_processor.py', '--cfg-path', '/tmp/tmpvq7xih0o']
+[2025-06-08T14:16:25.595+0000] {standard_task_runner.py:91} INFO - Job 200: Subtask start
+[2025-06-08T14:16:25.656+0000] {task_command.py:426} INFO - Running <TaskInstance: large_csv_processor_dag.start manual__2025-06-08T14:16:24+00:00 [running]> on host afb0ae728713
+[2025-06-08T14:16:25.762+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='large_csv_processor_dag' AIRFLOW_CTX_TASK_ID='start' AIRFLOW_CTX_EXECUTION_DATE='2025-06-08T14:16:24+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-06-08T14:16:24+00:00'
+[2025-06-08T14:16:25.764+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-06-08T14:16:25.782+0000] {csv_processor.py:257} INFO - Starting CSV processing pipeline
+[2025-06-08T14:16:25.783+0000] {python.py:237} INFO - Done. Returned value was: None
+[2025-06-08T14:16:25.784+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-06-08T14:16:25.802+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=large_csv_processor_dag, task_id=start, run_id=manual__2025-06-08T14:16:24+00:00, execution_date=20250608T141624, start_date=20250608T141625, end_date=20250608T141625
+[2025-06-08T14:16:25.854+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-06-08T14:16:25.877+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.9/site-packages/***/models/baseoperator.py:1296 AirflowProviderDeprecationWarning: Call to deprecated class PostgresOperator. (Please use `***.providers.common.sql.operators.sql.SQLExecuteQueryOperator`.Also, you can provide `hook_params={'schema': <database>}`.)
+[2025-06-08T14:16:25.911+0000] {taskinstance.py:3498} INFO - 3 downstream tasks scheduled from follow-on schedule check
+[2025-06-08T14:16:25.914+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
