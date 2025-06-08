@@ -90,7 +90,7 @@ Before you begin, ensure you have the following installed:
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/airflow-csv-postgres.git
+git clone https://github.com/jrderek9/airflow_demo_festman.git
 cd airflow-csv-postgres
 ```
 
